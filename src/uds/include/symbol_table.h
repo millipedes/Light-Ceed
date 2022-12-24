@@ -1,3 +1,11 @@
+/**
+ * @file   symbol_table.h
+ * @brief  This file contains the function definitions for symbol_table.c
+ * @author Matthew C. Lindeman
+ * @date   December 24, 2022
+ * @bug    None known
+ * @todo   Nothing
+ */
 #ifndef SYT_H
 #define SYT_H
 

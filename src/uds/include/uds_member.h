@@ -1,3 +1,11 @@
+/**
+ * @file   uds_member.h
+ * @brief  This file contains the function definitions for uds_member.c
+ * @author Matthew C. Lindeman
+ * @date   
+ * @bug    None known
+ * @todo   Nothing
+ */
 #ifndef UDSM_H
 #define UDSM_H
 

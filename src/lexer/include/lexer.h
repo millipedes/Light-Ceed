@@ -1,3 +1,11 @@
+/**
+ * @file   lexer.h
+ * @brief  This file contains the function definitions for lexer.c
+ * @author Matthew C. Lindeman
+ * @date   December 24, 2022
+ * @bug    None known
+ * @todo   Nothing
+ */
 #ifndef LEX_H
 #define LEX_H
 

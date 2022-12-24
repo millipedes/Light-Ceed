@@ -1,3 +1,11 @@
+/**
+ * @file   uds.h
+ * @brief  This function contains the function definitions for uds.c
+ * @author Matthew C. Lindeman
+ * @date   December 24, 2022
+ * @bug    None known
+ * @todo   Nothing
+ */
 #ifndef UDS_H
 #define UDS_H
 

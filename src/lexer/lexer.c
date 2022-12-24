@@ -1,6 +1,22 @@
+/**
+ * @file   lexer.c
+ * @brief  This file contains the functions the lex the .lc input file provided
+ * by the user.
+ * @author Matthew C. Lindeman
+ * @date   December 24, 2022
+ * @bug    None known
+ * @todo   Nothing
+ */
 #define _POSIX_C_SOURCE 200809L // C99 Standard for strn* funcs, POSIX only
 #include "include/lexer.h"
 
+/**
+ * This function initializes a lexer from a source buffer. It is expected that
+ * the src buffer is not dynamically allocated (as it is not freed in free
+ * function).
+ * @param  src - The source buffer
+ * @return lex - The newly initialized lexer.
+ */
 lexer * init_lexer(char * src) {
   lexer * lex = calloc(1, sizeof(struct LEXER_T));
   lex->src = src;
@@ -8,6 +24,13 @@ lexer * init_lexer(char * src) {
   return lex;
 }
 
+/**
+ * This function takes in the input .lc file and returns a symbol_table
+ * structure.
+ * @param file_name - The name (full path relative to where you are exeecuting)
+ * of the input file.
+ * @return   the_st - The newly filled symbol_table.
+ */
 symbol_table * lex_symbol_table(char * file_name) {
   FILE * fp = fopen(file_name, "r");
   symbol_table * the_st = init_symbol_table();
@@ -21,6 +44,16 @@ symbol_table * lex_symbol_table(char * file_name) {
   return the_st;
 }
 
+/**
+ * This function is responsible for lexing a particular user defined data
+ * structure. It does this by:
+ *   1) lexing the name/path of the uds,
+ *   2) lexing default methods,
+ *   3) lexing members.
+ * @param       fp - The file pointer of the input file.
+ * @param   the_st - The symbol_table that is in the process of being made.
+ * @return the_uds - The new uds data structure that was lexed.
+ */
 uds * lex_uds(FILE * fp, symbol_table * the_st) {
   method_type tmp_mt = INIT;
   method_type * method_types = NULL;
@@ -65,6 +98,16 @@ uds * lex_uds(FILE * fp, symbol_table * the_st) {
   return the_uds;
 }
 
+/**
+ * This function lexes the name of the uds, the path of the uds (minus last
+ * '/'), and the file name of the uds.
+ * @param lex - The lexer containing the buffer of the name, path, and file_name
+ * of the uds.
+ * @return name_path_file_name -
+ *   Index 0) The name
+ *   Index 1) The path
+ *   Index 2) The file name
+ */
 char ** lex_name_path_file_name(lexer * lex) {
   int last_fs = 0;
   int name_end = 0;
@@ -95,6 +138,14 @@ char ** lex_name_path_file_name(lexer * lex) {
   return name_path_file_name;
 }
 
+/**
+ * This function lexes a method type. I.e. it determines the next procedurally
+ * generated method to be generated, then advances the lexer just beyond the
+ * method.
+ * @param      lex - The lexer containing the methods to be generated.
+ * @return MT_NULL - No more methods need to be lexed.
+ *              .\ - Additional methods may exist.
+ */
 method_type lex_method_type(lexer * lex) {
   lex = lex_skip_whitespace_and_commas(lex);
   int starting_index = lex->current_index;
@@ -120,6 +171,13 @@ method_type lex_method_type(lexer * lex) {
   exit(1);
 }
 
+/**
+ * This function lexes a member of a user defined data structure.
+ * @param    lex - The lexer which contains a member of a user defined data
+ * structure.
+ * @param the_st - The symbol_table which contains the other uds's.
+ * @return    .\ - The uds_member that was lexed from lex.
+ */
 uds_member * lex_member(lexer * lex, symbol_table * the_st) {
   lex = lex_skip_whitespace(lex);
   int starting_index = lex->current_index;
@@ -180,6 +238,14 @@ uds_member * lex_member(lexer * lex, symbol_table * the_st) {
   }
 }
 
+/**
+ * This function is used by lex_member to lex the dereference_level of a member.
+ * This segment of code is repeated a couple of times and it makes sense to
+ * relagate it to its own function.
+ * @param               lex - The lexer whose current_index is at (or a space
+ * away from) the start of the '*'s.
+ * @return dereference_level - The number of '*'s.
+ */
 int lex_dereference_level(lexer * lex) {
   int dereference_level = 0;
   if(lex->src[lex->current_index] == ' ')
@@ -194,17 +260,34 @@ int lex_dereference_level(lexer * lex) {
   return dereference_level;
 }
 
+/**
+ * This function advances the lexer's current_index by n.
+ * @param  lex - The lexer to advance.
+ * @param    n - The number to advance current_index by.
+ * @return lex - The lexer advanced.
+ */
 lexer * lex_advance_n(lexer * lex, int n) {
   for(int i = 0; i < n; i++)
     lex_advance(lex);
   return lex;
 }
 
+/**
+ * This function advances a lexer's current_index by 1.
+ * @param  lex - The lexer to advance.
+ * @return lex - The advanced lexer.
+ */
 lexer * lex_advance(lexer * lex) {
   lex->current_index++;
   return lex;
 }
 
+/**
+ * This function advances the lexer's current_index past whitespace that is not
+ * '\n'.
+ * @param  lex - The lexer to be advanced.
+ * @return lex - The advanced lexer.
+ */
 lexer * lex_skip_whitespace(lexer * lex) {
   while(lex->src[lex->current_index] == ' ' ||
       lex->src[lex->current_index] == '\t')
@@ -212,6 +295,12 @@ lexer * lex_skip_whitespace(lexer * lex) {
   return lex;
 }
 
+/**
+ * This function advances the lexer's current_index past whitespace that is not
+ * '\n' and commas.
+ * @param  lex - The lexer to be advanced.
+ * @return lex - The advanced lexer.
+ */
 lexer * lex_skip_whitespace_and_commas(lexer * lex) {
   while(lex->src[lex->current_index] == ' ' ||
       lex->src[lex->current_index] == '\t' ||
@@ -220,12 +309,22 @@ lexer * lex_skip_whitespace_and_commas(lexer * lex) {
   return lex;
 }
 
+/**
+ * This function is used to debug the lexer.
+ * @param  lex - The lexer to be debugged.
+ * @return N/a
+ */
 void debug_lexer(lexer * lex) {
   printf("[LEXER]\n");
   printf("Current Index: %d\n", lex->current_index);
   printf("`%s`\n", lex->src);
 }
 
+/**
+ * This function frees a given lexer (see init_lexer for why src not freed).
+ * @param  lex - The lexer to be freed.
+ * @return N/a
+ */
 void free_lexer(lexer * lex) {
   if(lex)
     free(lex);

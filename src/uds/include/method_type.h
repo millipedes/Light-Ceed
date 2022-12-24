@@ -1,3 +1,11 @@
+/**
+ * @file   method_type.h
+ * @brief  This file contains the function definitoins for method_type.c
+ * @author Matthew C. Lindeman
+ * @date   December 24, 2022
+ * @bug    None known
+ * @todo   Nothing
+ */
 #ifndef MDT_H
 #define MDT_H
 

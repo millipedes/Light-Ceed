@@ -1,3 +1,11 @@
+/**
+ * @file   data_type.h
+ * @brief  This function contains the function definitions for data_type.c
+ * @author Matthew C. Lindeman
+ * @date   December 24, 2022
+ * @bug    None known
+ * @todo   Nothing
+ */
 #ifndef DTY_H
 #define DTY_H
 
