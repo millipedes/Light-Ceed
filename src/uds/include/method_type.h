@@ -11,4 +11,6 @@ typedef enum {
   FREE,
 } method_type;
 
+const char * method_type_to_string(method_type the_mt);
+
 #endif
