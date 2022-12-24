@@ -1,0 +1,76 @@
+@startuml
+
+class file_io {
+  {method} + symbol_table * file_to_symbol_table(char *)
+  {method} + int write_project(symbol_table *)
+}
+
+class lexer {
+   {field} + src : char *
+   {field} + current_index : int
+  {method} + lexer * init_lexer(char *)
+  {method} + uds * lex_uds(lexer *)
+  {method} + uds_member * lex_member(lexer *)
+  {method} + lexer * lex_advance(lexer *)
+  {method} + void debug_lexer(lexer *)
+  {method} + void free_lexer(lexer *)
+}
+
+class uds {
+   {field} + members : uds_member **
+   {field} + methods : method_type *
+   {field} + path : char *
+  {method} + uds * init_uds(void)
+  {method} + uds * add_member(uds_member *)
+  {method} + void debug_uds(uds *)
+  {method} + void free_uds(uds *)
+}
+
+class uds_member {
+   {field} + data_type : char *
+   {field} + name : char *
+  {method} + uds_member * init_uds_member(char *, char *)
+  {method} + void debug_uds_member(uds_member *)
+  {method} + void free_uds_member(uds_member *)
+}
+
+' class method {
+'    {field} + type : method_type
+' }
+
+class method_type {
+   {field} + DEBUG
+   {field} + FREE
+   {field} + INITIALIZE
+   {field} + ADD_MEMBER
+  {method} + const char * method_type_to_string(method_type)
+}
+
+class data_type {
+   {field} + literal : char *
+  {method} + data_type * init_data_type(char *)
+  {method} + void debug_data_type(data_type *)
+  {method} + void free_data_type(data_type *)
+}
+
+class symbol_table {
+   {field} + types : uds **
+  {method} + init_symbol_table(void)
+  {method} + debug_symbol_table(symbol_table *)
+  {mehtod} + add_type(symbol_table *, uds *)
+  {method} + free_symbol_table(symbol_table *)
+}
+
+symbol_table "1" o--> "*" uds
+
+uds "1" o--> "*" uds_member
+uds     o-->     method_type
+
+uds_member o--> data_type
+
+lexer --> uds
+
+file_io --> lexer
+file_io --> symbol_table
+
+@enduml
