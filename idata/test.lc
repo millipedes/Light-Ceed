@@ -1,0 +1,5 @@
+user_defined_type {
+  init, debug, add_member, free
+  int member_one
+  double member_two
+}
