@@ -10,7 +10,15 @@
 // is x (int|double|char) ? 1 : 0
 #define IS_STANDARD_TYPE(x) (!strncmp(x, "int", TYPE_MAX_SIZE) ||        \
                              !strncmp(x, "double", TYPE_MAX_SIZE) ||     \
-                             !strncmp(x, "char", TYPE_MAX_SIZE)) ? 1 : 0 \
+                             !strncmp(x, "char", TYPE_MAX_SIZE)) ? 1 : 0
+#define IS_INT(x, l)      (!strncmp(x, "int",    l)) ? 1 : 0
+#define IS_DOUBLE(x, l)   (!strncmp(x, "double", l)) ? 1 : 0
+#define IS_CHAR(x, l)     (!strncmp(x, "char",   l)) ? 1 : 0
+#define IS_UDS(x, u, l)   (!strncmp(x, u,        l)) ? 1 : 0
+
+#define INT_SIZE 3
+#define DOUBLE_SIZE 6
+#define CHAR_SIZE 4
 
 typedef struct DATA_TYPE_T {
   char * literal;
