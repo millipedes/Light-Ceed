@@ -10,6 +10,7 @@ uds * init_uds(char * name, char * path, char * file_name,
   the_uds = make_header_file(the_uds);
   the_uds->methods = methods;
   the_uds->no_methods = no_methods;
+  the_uds = make_req_libs(the_uds);
   the_uds->members = NULL;
   the_uds->no_members = 0;
   return the_uds;
@@ -22,6 +23,39 @@ uds * make_header_file(uds * the_uds) {
   the_uds->h_file_name = calloc(h_file_len, sizeof(char));
   strncpy(the_uds->h_file_name, the_uds->file_name, file_wo_ext);
   strncat(the_uds->h_file_name, H_EXTENSION, strnlen(H_EXTENSION, TYPE_MAX_SIZE));
+  return the_uds;
+}
+
+uds * make_req_libs(uds * the_uds) {
+  for(int i = 0; i < the_uds->no_methods; i++)
+    switch(the_uds->methods[i]) {
+      case INIT:
+      case ADD:
+      case DEEP_COPY:
+      case FREE:
+        the_uds = add_lib(the_uds, STDLIB);
+        break;
+      case DEBUG:
+        the_uds = add_lib(the_uds, STDIO);
+        break;
+      default:
+        fprintf(stderr, "[MAKE_REQ_LIBS]: MT_NULL passed?\nExiting\n");
+        exit(1);
+    }
+  return the_uds;
+}
+
+uds * add_lib(uds * the_uds, libs the_lib) {
+  for(int i = 0; i < the_uds->no_req_libs; i++)
+    if(the_uds->req_libs[i] == the_lib)
+      return the_uds;
+  the_uds->no_req_libs++;
+  if(!the_uds->req_libs)
+    the_uds->req_libs = calloc(1, sizeof(libs));
+  else
+    the_uds->req_libs = realloc(the_uds->req_libs, the_uds->no_req_libs
+        * sizeof(libs));
+  the_uds->req_libs[the_uds->no_req_libs - 1] = the_lib;
   return the_uds;
 }
 
@@ -41,6 +75,9 @@ void debug_uds(uds * the_uds) {
   printf("Path: %s/%s; Name: %s\n", the_uds->path, the_uds->file_name,
       the_uds->name);
   printf("Header Name: %s\n", the_uds->h_file_name);
+  printf("No libs: %d\n", the_uds->no_req_libs);
+  for(int i = 0; i < the_uds->no_req_libs; i++)
+    printf("%s\n", libs_to_string(the_uds->req_libs[i]));
   printf("No Methods: %d\n", the_uds->no_methods);
   for(int i = 0; i < the_uds->no_methods; i++)
     printf("%s\n", method_type_to_string(the_uds->methods[i]));
@@ -57,6 +94,8 @@ void free_uds(uds * the_uds) {
           free_uds_member(the_uds->members[i]);
       free(the_uds->members);
     }
+    if(the_uds->req_libs)
+      free(the_uds->req_libs);
     if(the_uds->methods)
       free(the_uds->methods);
     if(the_uds->path)

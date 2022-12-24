@@ -6,8 +6,8 @@ uds idata/src/uds/uds.c {
   char ***** member_four
 }
 
-st idata/src/st/st.c {
-  init, debug, add, free
+sta idata/src/st/sta.c {
+  init, debug, free
   uds * member_one
   double member_two
   double * member_three
