@@ -1,11 +1,9 @@
 #include "../lexer/include/lexer.h"
 
 int main(void) {
-  symbol_table * st = init_symbol_table();
-  uds * the_uds = lex_uds("idata/test.lc", st);
-  debug_uds(the_uds);
-  free_uds(the_uds);
-  free_symbol_table(st);
+  symbol_table * the_st = lex_symbol_table("idata/test.lc");
+  debug_symbol_table(the_st);
+  free_symbol_table(the_st);
 
   // lexer * lex = init_lexer("init, debug, deep_copy, free\n");
   // uds_member * uds_m = lex_member(lex, st);

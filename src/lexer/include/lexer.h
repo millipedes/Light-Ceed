@@ -9,7 +9,8 @@ typedef struct LEXER_T {
 } lexer;
 
 lexer * init_lexer(char * src);
-uds * lex_uds(char * file_name, symbol_table * the_st);
+symbol_table * lex_symbol_table(char * file_name);
+uds * lex_uds(FILE * fp, symbol_table * the_st);
 char ** lex_name_path_file_name(lexer * lex);
 method_type lex_method_type(lexer * lex);
 uds_member * lex_member(lexer * lex, symbol_table * the_st);

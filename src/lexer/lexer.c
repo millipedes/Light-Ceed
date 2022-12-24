@@ -8,14 +8,29 @@ lexer * init_lexer(char * src) {
   return lex;
 }
 
-uds * lex_uds(char * file_name, symbol_table * the_st) {
+symbol_table * lex_symbol_table(char * file_name) {
+  FILE * fp = fopen(file_name, "r");
+  symbol_table * the_st = init_symbol_table();
+  uds * tmp_uds = NULL;
+  do {
+    tmp_uds = lex_uds(fp, the_st);
+    if(tmp_uds)
+      the_st = add_symbol_table_member(the_st, tmp_uds);
+  } while(tmp_uds);
+  fclose(fp);
+  return the_st;
+}
+
+uds * lex_uds(FILE * fp, symbol_table * the_st) {
   method_type tmp_mt = INIT;
   method_type * method_types = NULL;
   uds * the_uds = NULL;
   int no_method_types = 0;
   char buffer[TYPE_MAX_SIZE];
-  FILE * fp = fopen(file_name, "r");
-  fgets(buffer, TYPE_MAX_SIZE, fp);
+  if(!fgets(buffer, TYPE_MAX_SIZE, fp))
+    return NULL;
+  while(buffer[0] == '\n')
+    fgets(buffer, TYPE_MAX_SIZE, fp);
   lexer * lex = init_lexer(buffer);
   char ** npfn = lex_name_path_file_name(lex);
   free_lexer(lex);
@@ -39,10 +54,14 @@ uds * lex_uds(char * file_name, symbol_table * the_st) {
     lex = init_lexer(buffer);
     if(lex->src[0] != '}')
       add_uds_member(the_uds, lex_member(lex, the_st));
+    else {
+      fgets(buffer, TYPE_MAX_SIZE, fp);
+      free_lexer(lex);
+      break;
+    }
     free_lexer(lex);
   }
   free(npfn);
-  fclose(fp);
   return the_uds;
 }
 

@@ -1,7 +1,15 @@
 uds src/uds/uds.c {
   init, debug, deep_copy, free
   int * member_one
+  double member_two
   double * member_three
   char ***** member_four
+}
+
+uds src/uds/uds.c {
+  init, debug, deep_copy, free
+  int * member_one
   double member_two
+  double * member_three
+  char ***** member_four
 }
