@@ -48,6 +48,7 @@ class method_type {
 
 class data_type {
    {field} + literal : char *
+   {field} + is_standard : int
   {method} + data_type * init_data_type(char *)
   {method} + void debug_data_type(data_type *)
   {method} + void free_data_type(data_type *)
