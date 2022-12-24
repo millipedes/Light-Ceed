@@ -1,10 +1,11 @@
 #include "include/uds.h"
 
-uds * init_uds(char * name, char * path, method_type * methods,
-    int no_methods) {
+uds * init_uds(char * name, char * path, char * file_name,
+    method_type * methods, int no_methods) {
   uds * the_uds = calloc(1, sizeof(struct UDS_T));
   the_uds->name = name;
   the_uds->path = path;
+  the_uds->file_name = file_name;
   the_uds->methods = methods;
   the_uds->no_methods = no_methods;
   the_uds->members = NULL;
@@ -25,7 +26,8 @@ uds * add_uds_member(uds * the_uds, uds_member * new_uds_member) {
 
 void debug_uds(uds * the_uds) {
   printf("[USER_DEFINE_STRUCTURE]\n");
-  printf("%s%s\n", the_uds->path, the_uds->name);
+  printf("Path: %s/%s; Name: %s\n", the_uds->path, the_uds->file_name,
+      the_uds->name);
   printf("No Methods: %d\n", the_uds->no_methods);
   for(int i = 0; i < the_uds->no_methods; i++)
     printf("%s\n", method_type_to_string(the_uds->methods[i]));
@@ -42,6 +44,14 @@ void free_uds(uds * the_uds) {
           free_uds_member(the_uds->members[i]);
       free(the_uds->members);
     }
+    if(the_uds->methods)
+      free(the_uds->methods);
+    if(the_uds->path)
+      free(the_uds->path);
+    if(the_uds->file_name)
+      free(the_uds->file_name);
+    if(the_uds->name)
+      free(the_uds->name);
     free(the_uds);
   }
 }

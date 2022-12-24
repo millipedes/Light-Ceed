@@ -10,6 +10,12 @@
   ? 1 : 0
 #define IS_FREE(x, l) !strncmp(x, method_type_to_string(FREE), l) ? 1 : 0
 
+#define ADD_SIZE 3
+#define INIT_SIZE 4
+#define DEBUG_SIZE 5
+#define DEEP_COPY_SIZE 9
+#define FREE_SIZE 4
+
 typedef enum {
   INIT,
   DEBUG,
