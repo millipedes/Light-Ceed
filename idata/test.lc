@@ -1,4 +1,4 @@
-uds src/uds/uds.c {
+uds idata/src/uds/uds.c {
   init, debug, deep_copy, free
   int * member_one
   double member_two
@@ -6,9 +6,9 @@ uds src/uds/uds.c {
   char ***** member_four
 }
 
-uds src/uds/uds.c {
-  init, debug, deep_copy, free
-  int * member_one
+st idata/src/st/st.c {
+  init, debug, add, free
+  uds * member_one
   double member_two
   double * member_three
   char ***** member_four
