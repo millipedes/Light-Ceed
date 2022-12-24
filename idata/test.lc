@@ -1,5 +1,5 @@
 user_defined_type {
-  init, debug, add_member, free
-  int member_one
+  init, debug, add_member, deep_copy, free
+  int * member_one
   double member_two
 }
