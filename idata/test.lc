@@ -1,4 +1,4 @@
-user_defined_type {
+uds src/uds/uds.c {
   init, debug, add_member, deep_copy, free
   int * member_one
   double member_two

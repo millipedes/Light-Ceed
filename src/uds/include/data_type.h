@@ -20,7 +20,6 @@ typedef struct DATA_TYPE_T {
 
 data_type * init_data_type(char * literal, int dereference_level);
 void debug_data_type(data_type * the_dt);
-int is_standard_type(char * literal);
 void free_data_type(data_type * the_dt);
 
 #endif

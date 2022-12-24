@@ -1,10 +1,5 @@
 @startuml
 
-class file_io {
-  {method} + symbol_table * file_to_symbol_table(char *)
-  {method} + int write_project(symbol_table *)
-}
-
 class lexer {
    {field} + src : char *
    {field} + current_index : int
@@ -20,45 +15,48 @@ class uds {
    {field} + members : uds_member **
    {field} + methods : method_type *
    {field} + path : char *
-  {method} + uds * init_uds(void)
+   {field} + name : char *
+   {field} + no_members : int
+   {field} + no_methods : int
+  {method} + uds * init_uds(char *, char *, method_type *, int)
   {method} + uds * add_member(uds_member *)
   {method} + void debug_uds(uds *)
   {method} + void free_uds(uds *)
 }
 
 class uds_member {
-   {field} + data_type : char *
+   {field} + type : data_type *
    {field} + name : char *
-  {method} + uds_member * init_uds_member(char *, char *)
+  {method} + uds_member * init_uds_member(data_type *, char *)
   {method} + void debug_uds_member(uds_member *)
   {method} + void free_uds_member(uds_member *)
 }
 
-' class method {
-'    {field} + type : method_type
-' }
-
 class method_type {
+   {field} + INIT
    {field} + DEBUG
+   {field} + ADD
+   {field} + DEEP_COPY
    {field} + FREE
-   {field} + INITIALIZE
-   {field} + ADD_MEMBER
+   {field} + MT_NULL
   {method} + const char * method_type_to_string(method_type)
 }
 
 class data_type {
    {field} + literal : char *
    {field} + is_standard : int
-  {method} + data_type * init_data_type(char *)
+   {field} + dereference_level : int
+  {method} + data_type * init_data_type(char *, int)
   {method} + void debug_data_type(data_type *)
   {method} + void free_data_type(data_type *)
 }
 
 class symbol_table {
-   {field} + types : uds **
+   {field} + all_uds : uds **
+   {field} + no_uds : int
   {method} + init_symbol_table(void)
+  {method} + add_symbol_table_member(symbol_table *, uds *)
   {method} + debug_symbol_table(symbol_table *)
-  {mehtod} + add_type(symbol_table *, uds *)
   {method} + free_symbol_table(symbol_table *)
 }
 
@@ -69,9 +67,9 @@ uds     o-->     method_type
 
 uds_member o--> data_type
 
+lexer --> symbol_table
 lexer --> uds
-
-file_io --> lexer
-file_io --> symbol_table
+lexer --> uds_member
+lexer --> method_type
 
 @enduml

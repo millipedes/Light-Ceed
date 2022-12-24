@@ -22,9 +22,19 @@ method_type lex_method_type(lexer * lex) {
     return MT_NULL;
 
   while(lex->src[lex->current_index] != ',' &&
-      lex->src[lex->current_index] != '\n')
+      lex->src[lex->current_index] != '\n') {
     lex_advance(lex);
-  ending_index = lex->current_index - 1;
+    ending_index = lex->current_index - 1;
+    /**
+     * If it is an "add" default method, additional processing is required and
+     * we do not just skip the ', '.
+     *
+     * @TODO add this functionality across program
+     */
+    if(IS_ADD(lex->src + starting_index, ending_index - starting_index))
+      return ADD;
+  }
+
   // Get it past the ', '
   if(lex->src[lex->current_index] == ',')
     lex_advance(lex);
@@ -35,8 +45,6 @@ method_type lex_method_type(lexer * lex) {
     return INIT;
   if(IS_DEBUG(lex->src + starting_index, ending_index - starting_index))
     return DEBUG;
-  if(IS_ADD(lex->src + starting_index, ending_index - starting_index))
-    return ADD;
   if(IS_DEEP_COPY(lex->src + starting_index, ending_index - starting_index))
     return DEEP_COPY;
   if(IS_FREE(lex->src + starting_index, ending_index - starting_index))
