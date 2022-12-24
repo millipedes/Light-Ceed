@@ -6,9 +6,12 @@
 typedef struct UDS_MEMBER_T {
   data_type * type;
   char * name;
+  char * flags;
 } uds_member;
 
-uds_member * init_uds_member(data_type * type, char * name);
+uds_member * init_uds_member(data_type * type, char * name, char * flags);
+int has_init_flag(uds_member * the_uds_member);
+int has_qty_flag(uds_member * the_uds_member);
 void debug_uds_member(uds_member * the_uds_member);
 void free_uds_member(uds_member * the_uds_member);
 

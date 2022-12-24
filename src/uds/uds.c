@@ -30,7 +30,6 @@ uds * make_req_libs(uds * the_uds) {
   for(int i = 0; i < the_uds->no_methods; i++)
     switch(the_uds->methods[i]) {
       case INIT:
-      case ADD:
       case DEEP_COPY:
       case FREE:
         the_uds = add_lib(the_uds, STDLIB);

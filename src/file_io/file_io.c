@@ -85,7 +85,10 @@ void write_header_file(symbol_table * the_st) {
     // Want a space between the defines and the libs
     fprintf(fp, "\n");
     write_libs(the_st, fp, i);
-    // Want a space between the defines and the function definitions
+    // Want a space between the defines and the struct
+    fprintf(fp, "\n");
+    write_structure_definition(the_st, fp, i);
+    // Want a space between the struct and the function definitions
     fprintf(fp, "\n");
     write_function_definitions(the_st, fp, i);
     fprintf(fp, "\n");
@@ -116,6 +119,24 @@ void write_libs(symbol_table * the_st, FILE * fp, int i) {
   }
 }
 
+void write_structure_definition(symbol_table * the_st, FILE * fp, int i) {
+  fprintf(fp, "typedef struct ");
+  for(int j = 0; j < (int)strnlen(the_st->all_uds[i]->name, TYPE_MAX_SIZE); j++)
+    fprintf(fp, "%c", the_st->all_uds[i]->name[j] - 32);
+  fprintf(fp, "_T {\n");
+  for(int j = 0; j < the_st->all_uds[i]->no_members; j++) {
+    write_tabstop(fp);
+    fprintf(fp, "%s ", the_st->all_uds[i]->members[j]->type->literal);
+    write_deref_level(the_st, fp, i, j);
+    fprintf(fp, "the_%s;\n", the_st->all_uds[i]->members[j]->name);
+    if(has_qty_flag(the_st->all_uds[i]->members[j])) {
+      write_tabstop(fp);
+      fprintf(fp, "int qty_%s;\n", the_st->all_uds[i]->members[j]->name);
+    }
+  }
+  fprintf(fp, "} %s;\n", the_st->all_uds[i]->name);
+}
+
 void write_function_definitions(symbol_table * the_st, FILE * fp, int i) {
   for(int j = 0; j < the_st->all_uds[i]->no_methods; j++) {
     switch(the_st->all_uds[i]->methods[j]) {
@@ -124,21 +145,21 @@ void write_function_definitions(symbol_table * the_st, FILE * fp, int i) {
         fprintf(fp, "%s * init_%s(", the_st->all_uds[i]->name,
             the_st->all_uds[i]->name);
         for(int k = 0; k < the_st->all_uds[i]->no_members; k++) {
-          if(the_st->all_uds[i]->members[k]->type->is_standard
-              && the_st->all_uds[i]->members[k]->type->dereference_level == 0
+          if(has_init_flag(the_st->all_uds[i]->members[k])
               && !void_flag) {
             void_flag = 1;
-            fprintf(fp, "%s the_%s",
-                the_st->all_uds[i]->members[k]->type->literal,
-                the_st->all_uds[i]->members[k]->name);
-          } else if(the_st->all_uds[i]->members[k]->type->is_standard
-              && the_st->all_uds[i]->members[k]->type->dereference_level == 0
+            fprintf(fp, "%s ", the_st->all_uds[i]->members[k]->type->literal);
+            write_deref_level(the_st, fp, i, k);
+            fprintf(fp, "the_%s", the_st->all_uds[i]->members[k]->name);
+          } else if(has_init_flag(the_st->all_uds[i]->members[k])
               && void_flag) {
-            fprintf(fp, ", %s the_%s",
-                the_st->all_uds[i]->members[k]->type->literal,
-                the_st->all_uds[i]->members[k]->name);
+            fprintf(fp, ", %s ", the_st->all_uds[i]->members[k]->type->literal);
+            write_deref_level(the_st, fp, i, k);
+            fprintf(fp, "the_%s", the_st->all_uds[i]->members[k]->name);
           }
         }
+        if(!void_flag)
+          fprintf(fp, "void");
         fprintf(fp, ");\n");
         break;
       case DEEP_COPY:
@@ -160,4 +181,18 @@ void write_function_definitions(symbol_table * the_st, FILE * fp, int i) {
         exit(1);
     }
   }
+}
+
+void write_deref_level(symbol_table * the_st, FILE * fp, int i, int j) {
+  for(int k = 0; k < the_st->all_uds[i]->members[j]->type->dereference_level;
+      k++) {
+    fprintf(fp, "*");
+    if(k == the_st->all_uds[i]->members[j]->type->dereference_level - 1)
+      fprintf(fp, " ");
+  }
+}
+
+void write_tabstop(FILE * fp) {
+  for(int i = 0; i < TABSTOP; i++)
+    fprintf(fp, " ");
 }

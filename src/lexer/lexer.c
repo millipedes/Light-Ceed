@@ -102,16 +102,7 @@ method_type lex_method_type(lexer * lex) {
   if(lex->src[lex->current_index] == '\n')
     return MT_NULL;
 
-  /**
-   * If it is an "add" default method, additional processing is required and
-   * we do not just skip the ', '.
-   *
-   * @TODO add this functionality across program
-   */
-  if(IS_ADD(lex->src + starting_index, ADD_SIZE)) {
-    lex = lex_advance_n(lex, ADD_SIZE);
-    return ADD;
-  } else if(IS_INIT(lex->src + starting_index, INIT_SIZE)) {
+  if(IS_INIT(lex->src + starting_index, INIT_SIZE)) {
     lex = lex_advance_n(lex, INIT_SIZE);
     return INIT;
   } else if(IS_DEBUG(lex->src + starting_index, DEBUG_SIZE)) {
@@ -136,6 +127,7 @@ uds_member * lex_member(lexer * lex, symbol_table * the_st) {
   int symbol_table_index = 0;
   data_type * the_dt = NULL;
   char * the_uds_member_name = NULL;
+  char * flags = NULL;
   /**
    * 1) Determine the type
    * 2) advance lexer past base type
@@ -168,14 +160,24 @@ uds_member * lex_member(lexer * lex, symbol_table * the_st) {
       }
   }
   starting_index = lex->current_index;
-  while(lex->src[lex->current_index] != '\n')
-    lex_advance(lex);
+  while(lex->src[lex->current_index] != '\n'
+      && lex->src[lex->current_index] != ':')
+    lex = lex_advance(lex);
   int ending_index = lex->current_index;
   size_t len = ending_index - starting_index + 1;
   the_uds_member_name = calloc(len, sizeof(char));
   // We do not want the '\n'
   strncpy(the_uds_member_name, lex->src + starting_index, len - 1);
-  return init_uds_member(the_dt, the_uds_member_name);
+  if(lex->src[lex->current_index] != ':')
+    return init_uds_member(the_dt, the_uds_member_name, flags);
+  else {
+    lex = lex_advance(lex);
+    len = strnlen(lex->src, TYPE_MAX_SIZE) - lex->current_index;
+    flags = calloc(len, sizeof(char));
+    // '\n' hence the '- 1'
+    strncpy(flags, lex->src + lex->current_index, len - 1);
+    return init_uds_member(the_dt, the_uds_member_name, flags);
+  }
 }
 
 int lex_dereference_level(lexer * lex) {

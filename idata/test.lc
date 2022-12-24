@@ -8,8 +8,8 @@ uds idata/src/uds/uds.c {
 
 sta idata/src/st/sta.c {
   init, debug, free
-  uds * member_one
-  double member_two
+  uds ** member_one:qai
+  double * member_two:i
   double * member_three
-  char ***** member_four
+  char ***** member_four:q
 }

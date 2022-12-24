@@ -19,7 +19,6 @@
 typedef enum {
   INIT,
   DEBUG,
-  ADD,
   DEEP_COPY,
   FREE,
   // We need this for lex to tell the EOL:

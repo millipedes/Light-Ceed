@@ -4,6 +4,7 @@ HFILES=$(wildcard src/*/include/*.h)
 OBJFILES=$(CFILES:.c=.o)
 OBJPATH=src/objects/
 EXEFILE=bin/main
+TESTDIRS=idata/src
 
 all:$(OBJFILES)
 	$(CC) $(OBJFILES) -o $(EXEFILE) -lm
@@ -39,3 +40,4 @@ git-update:
 clean:
 	rm $(OBJFILES)
 	rm $(EXEFILE)
+	rm -rf $(TESTDIRS)
