@@ -22,19 +22,19 @@ void write_header_file(symbol_table * the_st) {
   FILE * fp = NULL;
   size_t path_len = 0;
   size_t h_len = 0;
-  size_t include_len = 0;
   size_t total_len = 0;
   char * path = NULL;
   for(int i = 0; i < the_st->no_uds; i++) {
-    path_len = strnlen(the_st->all_uds[i]->path, TYPE_MAX_SIZE);
-    h_len = strnlen(the_st->all_uds[i]->h_file_name, TYPE_MAX_SIZE);
-    include_len = strnlen(INCLUDE_STRING, TYPE_MAX_SIZE);
-    total_len = path_len + h_len + include_len + 2;
+    path_len
+      = strnlen(the_st->all_uds[i]->uds_fs_info->each_sub_dir
+          [the_st->all_uds[i]->uds_fs_info->qty_sub_dirs - 1], TYPE_MAX_SIZE);
+    h_len = strnlen(the_st->all_uds[i]->uds_fs_info->h_file_name, TYPE_MAX_SIZE);
+    total_len = path_len + h_len + 2;
     path = calloc(total_len, sizeof(char));
-    strncpy(path, the_st->all_uds[i]->path, path_len);
-    strncat(path, INCLUDE_STRING, include_len);
+    strncpy(path, the_st->all_uds[i]->uds_fs_info->each_sub_dir
+          [the_st->all_uds[i]->uds_fs_info->qty_sub_dirs - 1], path_len);
     strncat(path, "/", h_len);
-    strncat(path, the_st->all_uds[i]->h_file_name, h_len);
+    strncat(path, the_st->all_uds[i]->uds_fs_info->h_file_name, h_len);
     fp = fopen(path, "w");
     write_header_defines(the_st, fp, i);
     // Want a space between the defines and the libs
@@ -63,78 +63,12 @@ void write_header_file(symbol_table * the_st) {
  */
 void write_directories(symbol_table * the_st) {
   struct stat dir_status = {0};
-  char ** each_sub_dir = NULL;
-  int qty_sub_dirs = 0;
-  for(int i = 0; i < the_st->no_uds; i++) {
-    qty_sub_dirs = partition_sub_dirs(the_st->all_uds[i]->path, &each_sub_dir);
-    for(int j = 0; j < qty_sub_dirs; j++) {
-      if(stat(each_sub_dir[j], &dir_status) == -1)
-        if(mkdir(each_sub_dir[j], 0755) != 0)
+  for(int i = 0; i < the_st->no_uds; i++)
+    for(int j = 0; j < the_st->all_uds[i]->uds_fs_info->qty_sub_dirs; j++)
+      if(stat(the_st->all_uds[i]->uds_fs_info->each_sub_dir[j], &dir_status)
+          == -1)
+        if(mkdir(the_st->all_uds[i]->uds_fs_info->each_sub_dir[j], 0755) != 0)
           fprintf(stderr, "[WRITE_DIRECTORIES]: %s\n", strerror(errno));
-    }
-    if(each_sub_dir) {
-      for(int j = 0; j < qty_sub_dirs; j++)
-        if(each_sub_dir[j])
-          free(each_sub_dir[j]);
-      free(each_sub_dir);
-      qty_sub_dirs = 0;
-      each_sub_dir = NULL;
-    }
-  }
-}
-
-/**
- * This function contains will write to each_sub_dir each sub directory that
- * needs to be written (if any) and will return them in a 2d array (the 3rd
- * pointer is so that it writes to the addess of the char ** being passed,
- * hacky way to get around two return values). The final value in the 2d array
- * will be the path with the include directory (name INCLUDE_STRING in header
- * file, the leading '/' is absolutely necessary as written).
- * Example:
- * some/path/to/file =>
- * each_sub_dir[0] = some
- * each_sub_dir[1] = some/path
- * each_sub_dir[2] = some/path/to
- * each_sub_dir[4] = some/path/to/file
- * each_sub_dir[5] = some/path/to/fileINCLUDE_STRING
- * @param          path - The path to write the 2d array with.
- * @parram each_sub_dir - The 2d array containing the sub directories.
- * @return qty_sub_dirs - The qty of sub directories (# of rows in
- * each_sub_dir).
- */
-int partition_sub_dirs(char * path, char *** each_sub_dir) {
-  int qty_sub_dirs = 0;
-  size_t len_path = strnlen(path, TYPE_MAX_SIZE);
-  for(int i = 0; i < (int)len_path; i++) {
-    if(path[i] == '/' || i == (int)(len_path - 1)) {
-      qty_sub_dirs++;
-      if(!each_sub_dir[0])
-        each_sub_dir[0] = calloc(1, sizeof(char *));
-      else
-        each_sub_dir[0] = realloc(each_sub_dir[0], qty_sub_dirs
-            * sizeof(char *));
-      // The last letter gets chopped in the case that of i == len(path) - 1
-      if(i == (int)(len_path - 1)) {
-        each_sub_dir[0][qty_sub_dirs - 1] = calloc(i + 2, sizeof(char));
-        strncpy(each_sub_dir[0][qty_sub_dirs - 1], path, i + 1);
-      } else {
-        each_sub_dir[0][qty_sub_dirs - 1] = calloc(i + 1, sizeof(char));
-        strncpy(each_sub_dir[0][qty_sub_dirs - 1], path, i);
-      }
-    }
-  }
-  // This makes the path/include
-  qty_sub_dirs++;
-  if(!each_sub_dir[0])
-    each_sub_dir[0] = calloc(1, sizeof(char *));
-  else
-    each_sub_dir[0] = realloc(each_sub_dir[0], qty_sub_dirs * sizeof(char *));
-  size_t len_include = strnlen(INCLUDE_STRING, TYPE_MAX_SIZE);
-  size_t len_total = len_path + len_include + 1;
-  each_sub_dir[0][qty_sub_dirs - 1] = calloc(len_total, sizeof(char));
-  strncpy(each_sub_dir[0][qty_sub_dirs - 1], path, len_path);
-  strncat(each_sub_dir[0][qty_sub_dirs - 1], INCLUDE_STRING, len_include);
-  return qty_sub_dirs;
 }
 
 /**
@@ -169,7 +103,10 @@ void write_header_defines(symbol_table * the_st, FILE * fp, int i) {
 void write_libs(symbol_table * the_st, FILE * fp, int i) {
   for(int j = 0; j < the_st->all_uds[i]->no_req_libs; j++) {
     fprintf(fp, "#include ");
-    fprintf(fp, libs_to_string(the_st->all_uds[i]->req_libs[j]));
+    if(IS_STANDARD_LIB(the_st->all_uds[i]->req_libs[j]))
+      fprintf(fp, the_st->all_uds[i]->req_libs[j]);
+    else
+      fprintf(fp, "\"%s\"", the_st->all_uds[i]->req_libs[j]);
     fprintf(fp, "\n");
   }
 }
