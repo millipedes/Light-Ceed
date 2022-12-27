@@ -41,6 +41,12 @@ symbol_table * add_symbol_table_member(symbol_table * the_st, uds * new_uds) {
   return the_st;
 }
 
+/**
+ * This function is used to update the library requirements of each uds as they
+ * are added.
+ * @param  the_st - The symbol_table whose uds's are being updated.
+ * @return the_st - The symbol_table whose uds's are updated.
+ */
 symbol_table * update_lib_requirements(symbol_table * the_st) {
   for(int i = 0; i < the_st->no_uds; i++) {
     for(int j = 0; j < the_st->all_uds[i]->no_members; j++) {
@@ -53,6 +59,12 @@ symbol_table * update_lib_requirements(symbol_table * the_st) {
           the_st->all_uds[i] = add_lib(the_st->all_uds[i], relative_path(
                 the_st->all_uds[found_type]->uds_fs_info,
                 the_st->all_uds[i]->uds_fs_info));
+        else {
+          fprintf(stderr, "User defined data structure with name: `%s` not "
+              "found\nExiting\n",
+              the_st->all_uds[i]->members[j]->type->literal);
+          exit(1);
+        }
       } else {
         the_st->all_uds[i] = make_req_libs(the_st->all_uds[i]);
       }
@@ -61,6 +73,14 @@ symbol_table * update_lib_requirements(symbol_table * the_st) {
   return the_st;
 }
 
+/**
+ * This function searchs the symbol_table for uds with the given name of type.
+ * This is necessary for determining depencies.
+ * @param the_st - The symbol_table to search.
+ * @param   type - The type name to search for from uds's of st.
+ * @return     i - The index of the uds which has name type.
+ *            -1 - uds with name type was not found
+ */
 int search_type(symbol_table * the_st, char * type) {
   for(int i = 0; i < the_st->no_uds; i++) {
     if(!strncmp(the_st->all_uds[i]->name, type, TYPE_MAX_SIZE))

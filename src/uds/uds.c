@@ -20,7 +20,7 @@
  * @param    methods - The default methods (which are generated via their type)
  * that the user specified for this particular uds.
  * @param no_methods - The number of methods that the user specified.
- * @return
+ * @return   the_uds - The initialized uds.
  */
 uds * init_uds(char * name, char * path, char * file_name,
     method_type * methods, int no_methods) {

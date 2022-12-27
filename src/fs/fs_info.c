@@ -1,6 +1,22 @@
+/**
+ * @file   fs_info.c
+ * @brief  This file contains the functions relating to the fs_info data
+ * structure.
+ * @author Matthew C. Lindeman
+ * @date   December 27, 2022
+ * @bug    None known
+ * @todo   Nothing
+ */
 #define _POSIX_C_SOURCE 200809L // C99 Standard for strn* funcs, POSIX only
 #include "include/fs_info.h"
 
+/**
+ * This function inializes an fs_info structure.
+ * @param         path - The path from which the fs_info is generated.
+ * @param  c_file_name - The name of the c file from which the fs_info is
+ * inialized.
+ * @return the_fs_info - The newly inited structure.
+ */
 fs_info * init_fs_info(char * path, char * c_file_name) {
   fs_info * the_fs_info = calloc(1, sizeof(struct FS_INFO_T));
   the_fs_info->qty_sub_dirs = 0;
@@ -10,6 +26,12 @@ fs_info * init_fs_info(char * path, char * c_file_name) {
   return the_fs_info;
 }
 
+/**
+ * This function makes the .h file name from the .c file name.
+ * @param  c_file_name - The .c file name from which to generate the .h file
+ * name.
+ * @return h_file_name - The .h file name.
+ */
 char * make_h_file_name(char * c_file_name) {
   // This mess just gets the index of the where file extension starts
   int file_wo_ext = (int)(strchr(c_file_name, '.') - c_file_name);
@@ -79,10 +101,11 @@ fs_info * partition_sub_dirs(fs_info * the_fs_info, char * path) {
 }
 
 /**
- * 
- * @param dest - The file which will be included.
- * @param  src - The file which is including dest.
- * @return
+ * This function is responsible for generating the relative path in form of a
+ * character pointer between src and dest.
+ * @param      dest - The file which will be included.
+ * @param       src - The file which is including dest.
+ * @return rel_path - The path between src and dest.
  */
 char * relative_path(fs_info * dest, fs_info * src) {
   int branch_index = -1;
@@ -119,6 +142,11 @@ char * relative_path(fs_info * dest, fs_info * src) {
   }
 }
 
+/**
+ * This function is used to debug an fs_info struct.
+ * @param the_fs_info - The fs_info to be debugged.
+ * @return        N/a
+ */
 void debug_fs_info(fs_info * the_fs_info) {
   printf("[FS_INFO]\n");
   printf("`%s`\n", the_fs_info->c_file_name);
@@ -128,6 +156,11 @@ void debug_fs_info(fs_info * the_fs_info) {
     printf("`%s`\n", the_fs_info->each_sub_dir[i]);
 }
 
+/**
+ * This function is used to free an fs_info data structure.
+ * @param the_fs_info - The fs info struct to be freed.
+ * @return        N/a
+ */
 void free_fs_info(fs_info * the_fs_info) {
   if(the_fs_info) {
     if(the_fs_info->each_sub_dir) {

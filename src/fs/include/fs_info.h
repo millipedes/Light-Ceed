@@ -1,3 +1,11 @@
+/**
+ * @file   fs_info.c
+ * @brief  This file contains the function definitions for fs_info.c
+ * @author Matthew C. Lindeman
+ * @date   December 27, 2022
+ * @bug    None known
+ * @todo   Nothing
+ */
 #ifndef FSI_H
 #define FSI_H
 

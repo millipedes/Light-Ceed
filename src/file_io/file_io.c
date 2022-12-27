@@ -17,4 +17,5 @@
  */
 void write_symbol_table(symbol_table * the_st) {
   write_header_file(the_st);
+  write_c_file(the_st);
 }

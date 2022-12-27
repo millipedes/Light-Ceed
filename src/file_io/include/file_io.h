@@ -10,6 +10,7 @@
 #define FIO_H
 
 #include "header_file.h"
+#include "c_file.h"
 
 void write_symbol_table(symbol_table * the_st);
 

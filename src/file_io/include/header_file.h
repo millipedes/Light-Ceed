@@ -13,17 +13,15 @@
 #include <errno.h>
 
 #include "../../uds/include/symbol_table.h"
+#include "basic_funcs.h"
 
 #define HEADER_DEF_LEN 3
-#define TABSTOP 2
 
 void write_header_file(symbol_table * the_st);
 void write_directories(symbol_table * the_st);
-void write_header_defines(symbol_table * the_st, FILE * fp, int i);
-void write_libs(symbol_table * the_st, FILE * fp, int i);
-void write_structure_definition(symbol_table * the_st, FILE * fp, int i);
-void write_function_definitions(symbol_table * the_st, FILE * fp, int i);
-void write_deref_level(symbol_table * the_st, FILE * fp, int i, int j);
-void write_tabstop(FILE * fp);
+void write_header_defines(uds * the_uds, FILE * fp);
+void write_libs(uds * the_uds, FILE * fp);
+void write_structure_definition(uds * the_uds, FILE * fp);
+void write_function_definitions(uds * the_uds, FILE * fp);
 
 #endif
