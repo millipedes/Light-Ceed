@@ -15,6 +15,7 @@
 #define TABSTOP 2
 
 void write_deref_level(uds * the_uds, FILE * fp, int i);
+void write_n_tabstop(FILE * fp, int n);
 void write_tabstop(FILE * fp);
 
 #endif

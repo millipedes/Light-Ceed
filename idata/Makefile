@@ -3,7 +3,6 @@ CFILES=$(wildcard src/*/*.c)
 HFILES=$(wildcard src/*/include/*.h)
 OBJFILES=$(CFILES:.c=.o)
 OBJPATH=src/objects/
-EXEFILE=bin/main
 
 all:$(OBJFILES)
 	$(CC) $(OBJFILES) -o $(EXEFILE) -lm
@@ -12,10 +11,7 @@ all:$(OBJFILES)
 	$(CC) -c $(CFILES) $< -o $@ -lm
 
 vim:
-	nvim $(CFILES) 
-
-vimh:
-	nvim $(HFILES) 
+	nvim $(CFILES) $(HFILES) 
 
 run:
 	$(EXEFILE)

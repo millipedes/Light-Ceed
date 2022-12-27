@@ -33,7 +33,7 @@ typedef struct UDS_T {
 
 uds * init_uds(char * name, char * path, char * file_name,
     method_type * methods, int no_methods);
-// uds * make_req_libs(uds * the_uds);
+uds * make_req_libs(uds * the_uds);
 uds * add_lib(uds * the_uds, char * the_lib);
 uds * add_uds_member(uds * the_uds, uds_member * new_uds_member);
 void debug_uds(uds * the_uds);

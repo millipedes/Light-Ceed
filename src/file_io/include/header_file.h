@@ -9,6 +9,7 @@
 #ifndef HFI_H
 #define HFI_H
 
+#include <ctype.h>
 #include <sys/stat.h>
 #include <errno.h>
 

@@ -122,7 +122,8 @@ void write_libs(uds * the_uds, FILE * fp) {
 void write_structure_definition(uds * the_uds, FILE * fp) {
   fprintf(fp, "typedef struct ");
   for(int i = 0; i < (int)strnlen(the_uds->name, TYPE_MAX_SIZE); i++)
-    fprintf(fp, "%c", the_uds->name[i] - 32);
+    fprintf(fp, "%c", isalpha(the_uds->name[i]) ? the_uds->name[i] - 32
+        : the_uds->name[i]);
   fprintf(fp, "_T {\n");
   for(int i = 0; i < the_uds->no_members; i++) {
     write_tabstop(fp);

@@ -20,7 +20,6 @@ symbol_table * init_symbol_table(void);
 symbol_table * add_symbol_table_member(symbol_table * the_st, uds * new_uds);
 symbol_table * update_lib_requirements(symbol_table * the_st);
 int search_type(symbol_table * the_st, char * type);
-uds * make_req_libs(uds * the_uds);
 void debug_symbol_table(symbol_table * the_st);
 void free_symbol_table(symbol_table * the_st);
 

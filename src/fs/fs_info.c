@@ -128,16 +128,16 @@ char * relative_path(fs_info * dest, fs_info * src) {
     snsp_path_len = strnlen(src->each_sub_dir[branch_index], TYPE_MAX_SIZE)
       - branch_point_len;
     rel_path_len = (branch_index * strnlen(UP_DIR, TYPE_MAX_SIZE))
-      + (strnlen(src->each_sub_dir[src->qty_sub_dirs - 1], TYPE_MAX_SIZE)
-          - snsp_path_len) + strnlen(src->h_file_name, TYPE_MAX_SIZE) + 2;
+      + (strnlen(src->each_sub_dir[dest->qty_sub_dirs - 1], TYPE_MAX_SIZE)
+          - snsp_path_len) + strnlen(dest->h_file_name, TYPE_MAX_SIZE) + 2;
     rel_path = calloc(rel_path_len, sizeof(char));
     for(int i = 0; i < branch_index; i++)
       strncat(rel_path, UP_DIR, TYPE_MAX_SIZE);
     // Don't get the '/' from src
-    strncat(rel_path, src->each_sub_dir[src->qty_sub_dirs - 1]
+    strncat(rel_path, dest->each_sub_dir[dest->qty_sub_dirs - 1]
         + branch_point_len + 1, TYPE_MAX_SIZE);
     strncat(rel_path, "/", TYPE_MAX_SIZE);
-    strncat(rel_path, src->h_file_name, TYPE_MAX_SIZE);
+    strncat(rel_path, dest->h_file_name, TYPE_MAX_SIZE);
     return rel_path;
   }
 }

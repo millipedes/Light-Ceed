@@ -27,6 +27,11 @@ void write_deref_level(uds * the_uds, FILE * fp, int i) {
   }
 }
 
+void write_n_tabstop(FILE * fp, int n) {
+  for(int i = 0; i < n; i++)
+    write_tabstop(fp);
+}
+
 /**
  * This function writes a tabstop to the given fp. This is controled via TABSTOP
  * in the header file.

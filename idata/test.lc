@@ -1,15 +1,9 @@
-uds idata/src/uds/uds.c {
-  init, debug, deep_copy, free
-  int * member_one
-  double member_two
-  double * member_three
-  char ***** member_four
+matrix_row idata/src/matrix/matrix_row.c {
+  init, debug, free
+  int * values:q
 }
 
-sta idata/src/st/sta.c {
+matrix idata/src/matrix/matrix.c {
   init, debug, free
-  uds ** member_one:qai
-  double * member_two:i
-  double * member_three
-  char ***** member_four:q
+  matrix_row ** rows:q
 }
